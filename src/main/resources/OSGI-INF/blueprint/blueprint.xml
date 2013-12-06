@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+default-availability="optional" default-activation="eager" >	
+
+	<!-- the blueprintBundleContext can not be injected via property, not sure why it is but at least 
+		we can inject all blueprint environment beans such as context, container, bundler and converter
+		via argument. 
+	 -->
+	<bean id="henplusMain" class="henplus.HenPlus">
+		<property name="context" ref="blueprintBundleContext" />
+		<argument ref="blueprintBundleContext"/>
+	</bean>
+	
+	<bean id="commandAction" class="com.adviser.karaf.commands.HenPlusCommandAction" >
+		<argument ref="henplusMain"/>
+		<property name="context" ref="blueprintBundleContext" />
+	</bean>
+	
+	<!-- if custom command is simple and runs with static number of variable and completers
+		so it is recommended to use normal way like tutorial on karaf site.
+		for example:
+		<command-bundle>
+			<command>
+				<action class="de.example.TestCommand" />
+				<completers>
+					<completer ref="..."/> 
+				</complelers>
+			</command>			
+		</command-bundle> 
+		We can define completer bean outside of command-bundle and inject it later.
+		There are some other options such as activation="eager or lazy". For more information see docus
+		on the blueprint's site
+	  -->
+    
+    
+    <!-- use this way that means you define your own custom command programmatic and dynamic. 
+    	Such as : manipulate argument, access console reader to read string typed so far, manipulate completer
+    	and so on. 
+     -->
+	<service>
+		<interfaces>
+			<value>org.apache.felix.service.command.Function</value>
+			<value>org.apache.karaf.shell.console.CompletableFunction</value>
+		</interfaces>
+		<service-properties>
+			<entry key="osgi.command.scope" value="*" />
+			<!-- define command name which show up on console. -->
+			<!-- *****THEN HenplusUtils.java MUST BE UPDATED WITH NEW NAME****  -->
+			<entry key="osgi.command.function" value="henplus" />
+		</service-properties>
+		<bean class="com.adviser.karaf.commands.HenPlusCommand">
+			<property name="blueprintContainer" ref="blueprintContainer" />
+			<property name="blueprintConverter" ref="blueprintConverter" />
+			<property name="blueprintBundleContext" ref="blueprintBundleContext" />
+			<property name="action" ref="commandAction" />
+			<argument ref="henplusMain" />
+		</bean>		
+	</service>
+</blueprint>
