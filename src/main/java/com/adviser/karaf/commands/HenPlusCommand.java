@@ -100,8 +100,13 @@ public class HenPlusCommand extends BlueprintCommand{
 	 */
 	@Override
 	public Object execute(CommandSession session, List<Object> arguments) throws Exception {
-		arguments = mergeArguments(arguments);	
-		System.out.println("argument : --"+arguments.get(0)+"--");
+		try{
+			arguments = mergeArguments(arguments);	
+			System.out.println("executed command : --"+arguments.get(0)+"--");
+		}catch(Exception e){
+			e.printStackTrace();
+			System.out.println("Errors occured by ArgumentParse: "+  e.getMessage());
+		}
 		
 		Action action = createNewAction();
 		try {
@@ -120,11 +125,12 @@ public class HenPlusCommand extends BlueprintCommand{
 	 * @param arguments
 	 * @return List with only one Argument
 	 */
-	private List<Object> mergeArguments(List<Object> arguments){
+	private List<Object> mergeArguments(List<Object> rawArguments){
 		List<Object> newArguments = new ArrayList<Object>();
+		List<String> arguments = handleRawArguments(rawArguments);
 		StringBuilder sb = new StringBuilder();		
 		int counter = 0;
-		for(Object argument : arguments){
+		for(String argument : arguments){			
 			argument = handleStringEqual((String) argument);
 			argument = handleStringLike(arguments, (String) argument);
 			
@@ -140,32 +146,30 @@ public class HenPlusCommand extends BlueprintCommand{
 	}
 	
 	
-	private String handleStringLike(List<Object> arguments, String current){
-		int descender = 0;
+	private String handleStringLike(List<String> arguments, String current){
+		int ancestor = 0;
 		String result = current;
-		String descenderString = "";
-		for(Object o : arguments){
-			if(o.equals(current)){
+		String ancestorString = "";
+		for(Object object : arguments){			
+			if(object.equals(current)){
 				break;
 			}
-			descender++;
+			ancestor++;
 		}
 		if(arguments != null){
-			if(arguments.size() > 0 && descender > 0){
-				descenderString =  (String) arguments.get(descender-1);
+			if(arguments.size() > 0 && ancestor > 0){
+				ancestorString =  (String) arguments.get(ancestor-1);
 			}
 		}		
 		
-		if(!descenderString.equalsIgnoreCase("")){
-			if(descenderString.equalsIgnoreCase("like") || descenderString.equalsIgnoreCase("=")){
+		if(!ancestorString.equalsIgnoreCase("")){
+			if(ancestorString.equalsIgnoreCase("like") || ancestorString.equalsIgnoreCase("=")){
 				return "'"+current+"'";
 			}			
 		}		
 		
 		return result;
 	}
-	
-	
 	
 	private String handleStringEqual(String argument){
 		String result = argument;
@@ -189,6 +193,24 @@ public class HenPlusCommand extends BlueprintCommand{
 			object = object.substring(1);
 		}
 		return object;
+	}
+	
+	/**
+	 * handle the rawArgument 
+	 * @param rawArguments
+	 * @return 
+	 */
+	private List<String> handleRawArguments(List<Object> rawArguments){
+		List<String> result = new ArrayList<String>();
+		if(rawArguments != null){
+			for(Object argument : rawArguments){
+				if(argument == null){
+					argument = "null";
+				}
+				result.add((String)argument);
+			}
+		}		
+		return result;
 	}
 	
 }
