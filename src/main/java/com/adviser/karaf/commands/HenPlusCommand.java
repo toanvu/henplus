@@ -38,7 +38,7 @@ public class HenPlusCommand extends BlueprintCommand{
 	
 	public BundleContext blueprintBundleContext;
 	
-	public BlueprintContainer blueprintContainer;	
+	private  BlueprintContainer blueprintContainer;	
 	
 	public void setBlueprintContainer(BlueprintContainer blueprintContainer) {
 		this.blueprintContainer = blueprintContainer;
@@ -149,14 +149,15 @@ public class HenPlusCommand extends BlueprintCommand{
 	private String handleStringLike(List<String> arguments, String current){
 		int ancestor = 0;
 		String result = current;
-		String ancestorString = "";
-		for(Object object : arguments){			
-			if(object.equals(current)){
-				break;
+		String ancestorString = "";		
+		if(arguments != null){			
+			for(Object object : arguments){			
+				if(object.equals(current)){
+					break;
+				}
+				ancestor++;
 			}
-			ancestor++;
-		}
-		if(arguments != null){
+			
 			if(arguments.size() > 0 && ancestor > 0){
 				ancestorString =  (String) arguments.get(ancestor-1);
 			}
@@ -196,9 +197,9 @@ public class HenPlusCommand extends BlueprintCommand{
 	}
 	
 	/**
-	 * handle the rawArgument 
+	 * handle the rawArguments 
 	 * @param rawArguments
-	 * @return 
+	 * @return list of handled arguments or empty list
 	 */
 	private List<String> handleRawArguments(List<Object> rawArguments){
 		List<String> result = new ArrayList<String>();
