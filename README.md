@@ -5,13 +5,13 @@ This Fork is apache-karaf enhanced so it could be loaded wird
 
 this will only run on oracles jdk's
 
-osgi:install mvn:org.apache.commons/com.springsource.org.apache.commons.cli/1.2.0
-osgi:install mvn:org.gnu.readline/com.springsource.org.gnu.readline/0.8.0
-osgi:install -s mvn:com.adviser.karaf.commands/henplus/1.0-SNAPSHOT
+* osgi:install mvn:org.apache.commons/com.springsource.org.apache.commons.cli/1.2.0
+* osgi:install mvn:org.gnu.readline/com.springsource.org.gnu.readline/0.8.0
+* osgi:install -s mvn:com.adviser.karaf.commands/henplus/1.0-SNAPSHOT
 
-#5 find config.properties in karaf/etc
-#   		then find : org.osgi.framework.system.packages.extra
-#   		then add : sun.misc
+* 5 find config.properties in karaf/etc
+*    		then find : org.osgi.framework.system.packages.extra
+*    		then add : sun.misc
 
 
 
